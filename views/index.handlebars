@@ -1,0 +1,25 @@
+  <div id="wrapper">
+      <h1>Note Scraperrrrrrr</h1>
+      <a href="/scrape">
+      <button>Scrape</button>
+      </a>
+      <h2><i>If you can do this...the homework should be no problem.</i></h2>
+      <div id="articles">
+{{#each articles}}
+{{!-- <div class="articles"> --}}
+<h3>{{this.title}}</h3>
+
+<p> {{this.summary}}</p>
+<a href={{this.link}} target="_blank">{{this.link}}</a>
+ <br><br>
+ <button type="button" class="btn btn-success save" data-id={{this._id}}>Save Article</button>
+
+{{!-- </div> --}}
+
+{{/each}}
+
+      </div>
+      <div id="notes">
+
+      </div>
+    </div>
