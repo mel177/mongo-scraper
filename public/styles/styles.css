@@ -9,7 +9,7 @@ body { background-image: url('https://images.pexels.com/photos/920115/pexels-pho
         display: inline-block;
         background-color: white;
         overflow: auto;
-        width: 60%;
+        width: 80%;
         height: 700px;
       }
       #notes {
