@@ -8,11 +8,13 @@ var path = require("path");
 // Requiring Note and Article models
 var Note = require("./models/Note.js");
 var Article = require("./models/Article.js");
+var Save = require("./models/Save.js");
 
 // Scraping tools
 var request = require("request");
 var cheerio = require("cheerio");
 
+// var db = require("./models");
 
 //Define port
 var port = process.env.PORT || 3030
