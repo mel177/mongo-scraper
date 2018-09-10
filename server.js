@@ -15,8 +15,6 @@ var request = require("request");
 var cheerio = require("cheerio");
 
 
-//Define port
-var port = process.env.PORT || 3030
 
 // Initialize Express
 var app = express();
@@ -34,14 +32,21 @@ app.use(express.static("public"));
 var exphbs = require("express-handlebars");
 
 app.engine("handlebars", exphbs({
-    defaultLayout: "main",
-    partialsDir: path.join(__dirname, "/views/layouts/partials")
+  defaultLayout: "main",
+  partialsDir: path.join(__dirname, "/views/layouts/partials")
 }));
 app.set("view engine", "handlebars");
 
 // Database configuration with mongoose
-mongoose.connect("mongodb://localhost/mongo-scraper");
-var db = mongoose.connection;
+// mongoose.connect("mongodb://localhost/mongo-scraper");
+// var db = mongoose.connection;
+
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://mel:melinh1@ds251632.mlab.com:51632/heroku_5lctldgv";
+
+// Set mongoose to leverage built in JavaScript ES6 Promises
+// Connect to the Mongo DB
+mongoose.Promise = Promise;
+mongoose.connect(MONGODB_URI);
 
 // Show any mongoose errors
 db.on("error", function(error) {
@@ -84,19 +89,19 @@ app.get("/scrape", function(req, res) {
     var $ = cheerio.load(html);
     // Now, we grab every h2 within an article tag, and do the following:
     $("article").each(function(i, element) {
-
+      
       // Save an empty result object
       var result = {};
-
+      
       // Add the title and summary of every link, and save them as properties of the result object
       result.title = $(this).children("h2").text();
       result.summary = $(this).children(".summary").text();
       result.link = $(this).children("h2").children("a").attr("href");
-
+      
       // Using our Article model, create a new entry
       // This effectively passes the result object to the entry (and the title and link)
       var entry = new Article(result);
-
+      
       // Now, save that entry to the db
       entry.save(function(err, doc) {
         // Log any errors
@@ -108,10 +113,10 @@ app.get("/scrape", function(req, res) {
           console.log(doc);
         }
       });
-
+      
     });
-        res.send("Scrape Complete");
-
+    res.send("Scrape Complete");
+    
   });
   // Tell the browser that we finished scraping the text
 });
@@ -153,36 +158,36 @@ app.get("/articles/:id", function(req, res) {
 
 // Save an article
 app.post("/articles/save/:id", function(req, res) {
-      // Use the article id to find and update its saved boolean
-      Article.findOneAndUpdate({ "_id": req.params.id }, { "saved": true})
-      // Execute the above query
-      .exec(function(err, doc) {
-        // Log any errors
-        if (err) {
-          console.log(err);
-        }
-        else {
-          // Or send the document to the browser
-          res.send(doc);
-        }
-      });
+  // Use the article id to find and update its saved boolean
+  Article.findOneAndUpdate({ "_id": req.params.id }, { "saved": true})
+  // Execute the above query
+  .exec(function(err, doc) {
+    // Log any errors
+    if (err) {
+      console.log(err);
+    }
+    else {
+      // Or send the document to the browser
+      res.send(doc);
+    }
+  });
 });
 
 // Delete an article
 app.post("/articles/delete/:id", function(req, res) {
-      // Use the article id to find and update its saved boolean
-      Article.findOneAndUpdate({ "_id": req.params.id }, {"saved": false, "notes": []})
-      // Execute the above query
-      .exec(function(err, doc) {
-        // Log any errors
-        if (err) {
-          console.log(err);
-        }
-        else {
-          // Or send the document to the browser
-          res.send(doc);
-        }
-      });
+  // Use the article id to find and update its saved boolean
+  Article.findOneAndUpdate({ "_id": req.params.id }, {"saved": false, "notes": []})
+  // Execute the above query
+  .exec(function(err, doc) {
+    // Log any errors
+    if (err) {
+      console.log(err);
+    }
+    else {
+      // Or send the document to the browser
+      res.send(doc);
+    }
+  });
 });
 
 
@@ -231,23 +236,25 @@ app.delete("/notes/delete/:note_id/:article_id", function(req, res) {
     }
     else {
       Article.findOneAndUpdate({ "_id": req.params.article_id }, {$pull: {"notes": req.params.note_id}})
-       // Execute the above query
-        .exec(function(err) {
-          // Log any errors
-          if (err) {
-            console.log(err);
-            res.send(err);
-          }
-          else {
-            // Or send the note to the browser
-            res.send("Note Deleted");
-          }
-        });
+      // Execute the above query
+      .exec(function(err) {
+        // Log any errors
+        if (err) {
+          console.log(err);
+          res.send(err);
+        }
+        else {
+          // Or send the note to the browser
+          res.send("Note Deleted");
+        }
+      });
     }
   });
 });
 
 // Listen on port
+//Define port
+var port = process.env.PORT || 3030
 app.listen(port, function() {
   console.log("App running on port " + port);
 });
