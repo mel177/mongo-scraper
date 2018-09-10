@@ -14,7 +14,6 @@ var Save = require("./models/Save.js");
 var request = require("request");
 var cheerio = require("cheerio");
 
-// var db = require("./models");
 
 //Define port
 var port = process.env.PORT || 3030
