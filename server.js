@@ -39,7 +39,7 @@ app.set("view engine", "handlebars");
 
 // Database configuration with mongoose
 // mongoose.connect("mongodb://localhost/mongo-scraper");
-// var db = mongoose.connection;
+var db = mongoose.connection;
 
 var MONGODB_URI = process.env.MONGODB_URI || "mongodb://Melinh:Passw0rd!@ds251632.mlab.com:51632/heroku_5lctldgv";
 
